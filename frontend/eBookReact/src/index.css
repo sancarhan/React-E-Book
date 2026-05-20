@@ -6,9 +6,9 @@
 } */
 
 @theme{
-  --font-display: "Exo 2", sans-serif";
-  --breakpoint-3xl: 1920px;
-  --color-primary: #FF9324;
+  --font-display: "Exo 2", sans-serif;
+  --breakpoint-3xl: 1920px ;
+  --color-primary: #FF9324 ;
 }
 
 @layer base{
