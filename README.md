@@ -4,7 +4,7 @@ Bu proje, e-kitap (book) okuma/oluşturma akışlarına yönelik bir **React** u
 
 > Not: README; mevcut kod iskeletine (placeholder sayfalar/bileşenler) göre “uygulanabilir” ve “genişletilebilir” olacak şekilde kapsamlı hazırlanmıştır. Backend ile ilgili uç noktalar/kimlik doğrulama detayları, projedeki `utils` dosyaları üzerinden ileride netleştirilecek şekilde dokümante edilmiştir.
 
----
+----
 
 ## İçindekiler
 - [Öne Çıkanlar](#önek-çıkanlar)
