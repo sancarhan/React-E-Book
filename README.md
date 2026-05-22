@@ -19,6 +19,7 @@ Bu proje, e-kitap (book) okuma/oluşturma akışlarına yönelik bir **React** u
 - [API/Backend Entegrasyonu](#apibackend-entegrasyonu)
 - [Sık Sorulanlar (SSS)](#sık-sorulanlar-sss)
 
+
 ---
 
 ## Öne Çıkanlar
