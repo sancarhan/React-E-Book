@@ -291,5 +291,5 @@ Bu repo zaten `AuthContext` ve `ProtectedRoute` iskeletine sahip görünüyor.
 
 ---
 
-> Son Not: Bu doküman, proje iskeletinde görünen modül/klasör yapısına göre kapsamlı şekilde yazılmıştır. Kod tarafında eklenen her yeni endpoint, route veya UI akışı, README’nin ilgili bölümüne eklenerek güncel tutulmalıdır.
+
 
