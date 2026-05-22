@@ -1,191 +1,295 @@
-# eBookReact (React + Vite)
+# eBookReact (React + Vite) — Kapsamlı Türkçe Dokümantasyon
 
-Bu proje, e-kitap (book) okuma/oluşturma akışlarına yönelik bir **React** uygulamasıdır. Uygulama; **landing**, **login**, **signup**, korumalı rotalar, **dashboard**, **editor** ve **kitap görüntüleme** ekranları gibi parçalarla genişletilmeye uygundur.
-
-> Not: README; mevcut kod iskeletine (placeholder sayfalar/bileşenler) göre “uygulanabilir” ve “genişletilebilir” olacak şekilde kapsamlı hazırlanmıştır. Backend ile ilgili uç noktalar/kimlik doğrulama detayları, projedeki `utils` dosyaları üzerinden ileride netleştirilecek şekilde dokümante edilmiştir.
-
-----
-
-## İçindekiler
-- [Öne Çıkanlar](#önek-çıkanlar)
-- [Teknolojiler](#teknolojiler)
-- [Özellikler ve Uygulama Akışı](#özellikler-ve-uygulama-akışı)
-- [Ön Koşullar](#ön-koşullar)
-- [Kurulum](#kurulum)
-- [Geliştirme Sunucusu (Dev)](#geliştirme-sunucusu-dev)
-- [Build & Preview](#build--preview)
-- [Lint](#lint)
-- [Proje Yapısı](#proje-yapısı)
-- [API/Backend Entegrasyonu](#apibackend-entegrasyonu)
-- [Sık Sorulanlar (SSS)](#sık-sorulanlar-sss)
+> Bu proje, e-kitap (kitap/bölüm) okuma ve içerik üretme odaklı çalışan bir **React + Vite** uygulamasıdır. Uygulama; **landing**, **login**, **signup**, korumalı sayfalar, **dashboard**, **editor** ve kitap görüntüleme gibi modüllere ayrılmıştır.
+>
+> Backend tarafı ise **Node.js (Express)** ve **MongoDB (Mongoose)** üzerinde kurgulanmıştır. Kimlik doğrulama (auth), veri modelleme (User/Book) ve dosya/dış içerik süreçleri için genişletilebilir bir temel sunar.
 
 ---
 
-## Öne Çıkanlar
-- **React 19** + **React Router** ile sayfa/route tabanlı mimari
-- **Vite** ile hızlı geliştirme ve production build
-- **TailwindCSS** (Utility-first) ile UI geliştirme için temel altyapı
-- **ESLint** ile kod kalitesi
+## İçindekiler
+- [Genel Bakış](#genel-bakış)
+- [Özellikler](#özellikler)
+- [Teknolojiler](#teknolojiler)
+- [Kullanılan Mimari Yaklaşımı](#kullanılan-mimari-yaklaşımı)
+- [Proje Yapısı](#proje-yapısı)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+- [Kurulum](#kurulum)
+- [Çalıştırma](#çalıştırma)
+  - [Frontend (Dev)](#frontend-dev)
+  - [Frontend (Build/Preview)](#frontend-buildpreview)
+  - [Backend (Dev)](#backend-dev)
+- [API / Entegrasyon](#api--entegrasyon)
+  - [Axios ortak ayarları](#axios-ortak-ayarları)
+  - [Endpoint path mantığı](#endpoint-path-mantığı)
+  - [Token / Authorization akışı](#token--authorization-akışı)
+- [Kimlik Doğrulama Akışı (Önerilen)](#kimlik-doğrulama-akışı-önerilen)
+- [Geliştirme İpuçları (Best Practices)](#geliştirme-ipuçları-best-practices)
+- [Güvenlik Notları](#güvenlik-notları)
+- [Sık Sorulanlar (SSS)](#sık-sorulanlar-sss)
+- [Sorun Giderme](#sorun-giderme)
+
+---
+
+## Genel Bakış
+Bu repo iki ana parçadan oluşur:
+1. **frontend/eBookReact**: React tabanlı kullanıcı arayüzü.
+2. **backend**: Express tabanlı API servisi (MongoDB ile veri erişimi).
+
+Amaç:
+- Kullanıcıların hesap oluşturup (signup) giriş yapabilmesi (login)
+- Giriş yaptıktan sonra bazı sayfaların **korunması**
+- Dashboard üzerinden kullanıcıya ait içerikleri yönetebilmesi
+- Editor ile kitap/section içeriğini düzenleyebilmesi
+- Kitap görüntüleme ekranlarında bölüm bazında içerikleri okuyabilmesi
+
+> Not: Bu README, mevcut proje iskeletini (UI/route düzeni ve entegrasyon noktaları) baz alarak **kapsamlı** bir dokümantasyon sunar. Kodun tamamı değil, modüller için görünen/öngörülen akışlar üzerinden ilerlenir.
+
+---
+
+## Özellikler
+- **React Router ile route tabanlı mimari**
+- Landing / Login / Signup akışları
+- **AuthContext** ve **ProtectedRoute** ile korumalı sayfalar için temel
+- Dashboard ve layout bileşenleri
+- Kitap listeleme + bölüm sidebar görünümü için bileşen organizasyonu
+- Editor sayfası ile içerik oluşturma/düzenleme alanı
+- Backend:
+  - MongoDB bağlantısı (Mongoose)
+  - User modeli (bcrypt ile şifreleme alanı)
+  - Dosya/Static path için uploads dizini (server.js içinde)
 
 ---
 
 ## Teknolojiler
-- **React**: v19.2.x
-- **React Router DOM**: v7.x
-- **Vite**: v8.x
-- **TailwindCSS**: v4.x (paket: `tailwindcss` ve `@tailwindcss/vite`)
-- **ESLint**: v10.x
+Frontend:
+- **React**
+- **Vite**
+- **React Router DOM**
+- **ESLint**
+- (Pakette mevcutsa) **TailwindCSS**
+
+Backend:
+- **Node.js**
+- **Express**
+- **Mongoose** (MongoDB)
+- **dotenv** (çevresel değişkenler)
+- **cors**
+- **bcryptjs**
 
 ---
 
-## Özellikler ve Uygulama Akışı
-Uygulama router üzerinden aşağıdaki rotaları içerir:
+## Kullanılan Mimari Yaklaşımı
+### Frontend
+- `src/pages/` altında sayfalar
+- `src/components/` altında ortak bileşenler (UI, layout, kartlar, modals, view vb.)
+- `src/context/` altında oturum ve kullanıcı verisi için global durum
+- `src/utils/` altında yardımcı fonksiyonlar ve API çağrıları için yapı taşları
 
-- **`/`** → `LandingPage`
-- **`/login`** → `LoginPage`
-- **`/signup`** → `SignupPage`
-
-Ayrıca projede iskelet olarak şu modüller yer alır (bileşen sayfaları/klasörler):
-
-### 1) Auth (Kimlik Doğrulama) Katmanı
-- `src/components/auth/ProtectedRoute.jsx`
-  - Korunan sayfalar için “oturum var mı?” kontrolünü yapmak üzere tasarlanmıştır.
-
-- `src/context/AuthContext.jsx`
-  - Uygulama genelinde kullanıcı oturum bilgisini (token, user bilgisi vb.) yönetmek için hazırlanmıştır.
-
-> Geliştirme önerisi: `AuthContext` içinde:
-> - `user`, `token`
-> - `login()`, `logout()` fonksiyonları
-> - otomatik token ekleme / session kontrolü
-> gibi fonksiyonlar netleştirilebilir.
-
-### 2) Landing / Login / Signup
-- `src/pages/LandingPage.jsx`
-- `src/pages/LoginPage.jsx`
-- `src/pages/SignupPage.jsx`
-
-Bu sayfalar; gerçek form doğrulama, backend API çağrıları ve yönlendirme davranışları eklenerek tamamlanabilir.
-
-### 3) Dashboard
-- `src/pages/DashboardPage.jsx`
-- `src/components/layout/DashboardLayout.jsx`
-- `src/components/layout/Navbar.jsx`
-- `src/components/layout/ProfileDropdown.jsx`
-
-Dashboard; kullanıcıya ait kitaplar, son oluşturulan içerikler veya yönetim ekranları için genişletilebilir.
-
-### 4) Kitap Görüntüleme
-- `src/pages/ViewBookPage.jsx`
-- `src/components/view/ViewBooks.jsx`
-- `src/components/view/ViewChapterSidebar.jsx`
-- `src/components/cards/BookCard.jsx`
-
-Bu alan; seçilen kitabın içeriğini ve bölüm (chapter) listesini görüntülemeye yönelik tasarlanmıştır.
-
-### 5) Editör
-- `src/pages/EditorPage.jsx`
-
-Editor; e-kitap içeriğini oluşturma/düzenleme akışları için genişletilir.
+### Backend
+- `server.js`: Express uygulaması + middleware + statik dosya servisleri + port
+- `config/db.js`: MongoDB bağlantısı
+- `models/`: Mongoose modelleri (örn. `User.js`)
+- `routes/` ve `controller/`: Route bazlı uçtan uca iş akışı (entegrasyon noktaları)
 
 ---
 
-## Ön Koşullar
-- **Node.js** (genellikle 18+ tavsiye edilir)
-- **npm** (veya alternatif paket yöneticisi)
+## Proje Yapısı
+Aşağıdaki yapı, repo klasör adlarını baz alarak açıklanmıştır.
+
+### Frontend
+Konum: `frontend/eBookReact/`
+
+- `src/pages/`
+  - `LandingPage.jsx`
+  - `LoginPage.jsx`
+  - `SignupPage.jsx`
+  - `DashboardPage.jsx`
+  - `EditorPage.jsx`
+  - `ViewBookPage.jsx`
+  - `ProfilePage.jsx`
+
+- `src/components/layout/`
+  - `DashboardLayout.jsx`
+  - `Navbar.jsx`
+  - `ProfileDropdown.jsx`
+
+- `src/components/cards/`
+  - `BookCard.jsx`
+
+- `src/components/modals/`
+  - `CreateBookModal.jsx`
+
+- `src/components/ui/` (ortak UI bileşenleri)
+  - `Button.jsx`, `InputField.jsx`, `Modal.jsx`, `SelectField.jsx`, `TextareaField.jsx`, vb.
+
+- `src/components/view/`
+  - `ViewBooks.jsx`
+  - `ViewChapterSidebar.jsx`
+
+- `src/components/auth/`
+  - `ProtectedRoute.jsx`
+
+- `src/context/`
+  - `AuthContext.jsx`
+
+- `src/utils/`
+  - `apiPaths.js`
+  - `axiosInstance.js`
+  - `data.js`, `helper.js`
+
+### Backend
+Konum: `backend/`
+
+- `server.js`
+  - Express app oluşturma
+  - CORS ayarları
+  - JSON body parse
+  - `uploads` statik servis
+  - Port dinleme
+
+- `config/db.js`
+  - MongoDB bağlantısı
+
+- `models/`
+  - `User.js` (Mongoose şema + bcryptjs ile şifreleme için temel)
 
 ---
 
 ## Kurulum
+Repo kökünde iki proje olduğu için iki ayrı kurulum gerekir.
+
+### 1) Frontend Kurulumu
 ```bash
 cd frontend/eBookReact
 npm install
 ```
 
+### 2) Backend Kurulumu
+```bash
+cd backend
+npm install
+```
+
 ---
 
-## Geliştirme Sunucusu (Dev)
+## Çalıştırma
+
+### Frontend (Dev)
+`frontend/eBookReact` dizininde:
 ```bash
 npm run dev
 ```
 
-- Varsayılan olarak Vite geliştirme sunucusu başlatılır.
-- Tarayıcıdan genellikle `http://localhost:5173` adresinden erişilir.
+- Tarayıcıdan genellikle: `http://localhost:5173`
 
----
-
-## Build & Preview
-### Build
+### Frontend (Build/Preview)
 ```bash
 npm run build
-```
-
-### Preview
-```bash
 npm run preview
 ```
 
-- Production build’inizi lokalde test etmek için kullanılır.
-
----
-
-## Lint
+### Backend (Dev)
+`backend` dizininde:
 ```bash
-npm run lint
+node server.js
 ```
 
----
-
-## Proje Yapısı
-Klasör mantığı (mevcut repo yapısına göre):
-
-- `src/pages/`
-  - Uygulama sayfaları: `LandingPage`, `LoginPage`, `SignupPage`, `DashboardPage`, `EditorPage`, `ViewBookPage`, `ProfilePage`
-
-- `src/components/`
-  - `auth/`: `ProtectedRoute` gibi kimlik doğrulama destekleri
-  - `layout/`: genel sayfa yerleşimleri (navbar, dashboard layout vb.)
-  - `cards/`: `BookCard`
-  - `modals/`: `CreateBookModal`
-  - `ui/`: ortak UI bileşenleri (`Button`, `InputField`, `Modal`, `SelectField`, `TextareaField`)
-  - `view/`: kitap görüntüleme bileşenleri (`ViewBooks`, `ViewChapterSidebar`)
-
-- `src/context/`
-  - `AuthContext.jsx`: kullanıcı/oturum durumu yönetimi için
-
-- `src/utils/`
-  - `apiPaths.js`: backend endpoint path’leri
-  - `axiosInstance.js`: axios için ortak instance (baseURL, interceptors vb.)
-  - `data.js`, `helper.js`: yardımcı fonksiyonlar ve/veya demo veri
+> Alternatif olarak `package.json` içinde tanımlı bir script varsa `npm run dev` kullanılabilir (mevcut repo scriptlerine göre).
 
 ---
 
-## API/Backend Entegrasyonu
-Bu uygulama; backend ile haberleşmek için yardımcı dosyalar içeriyor:
+## API / Entegrasyon
+Frontend, backend ile `axios` üzerinden haberleşecek şekilde yapı taşlarını içeriyor:
 
-- `src/utils/apiPaths.js`
-- `src/utils/axiosInstance.js`
+- `src/utils/axiosInstance.js`: axios için ortak instance (baseURL, interceptors, header ekleme vb.)
+- `src/utils/apiPaths.js`: endpoint path’leri için merkezi tanım
 
-### Tipik entegrasyon yaklaşımı
-1. `axiosInstance.js` içine backend base URL tanımlanır.
-2. `apiPaths.js` içine endpoint’ler (örn. `/auth/login`, `/books`, `/chapters`) eklenir.
-3. Login/Signup sayfalarında form submit ile ilgili endpoint çağrılır.
-4. Token alınır ve `AuthContext` veya axios interceptor üzerinden kullanılır.
-5. `ProtectedRoute` içinde oturum kontrolü yapılır.
+> Bu dosyalar üzerinden endpoint isimlerini bir kez yönetmek, kod tekrarını azaltır.
 
-> İpucu: Ortak bir token ekleme sistemi için axios interceptor kullanmak kod tekrarını azaltır.
+### Axios ortak ayarları
+Tipik kullanım örüntüsü:
+- `axiosInstance` içine `baseURL` tanımlanır.
+- Her istek için gerekiyorsa `Authorization: Bearer <token>` header’ı eklenir.
+
+### Endpoint path mantığı
+`apiPaths.js` içinde örnek mantık:
+- `auth.login`
+- `auth.signup`
+- `books.list`
+- `books.create`
+
+Bu sayede UI katmanı sadece “hangi path”i çağıracağını bilir, string tekrarları azalır.
+
+### Token / Authorization akışı
+Önerilen akış:
+1. Kullanıcı login olur.
+2. Backend token (ör. JWT) döner.
+3. Frontend token’ı saklar (örn. localStorage veya cookie).
+4. Sonraki isteklerde token `Authorization` header’a eklenir.
+5. `ProtectedRoute` veya `axios interceptor` ile koruma sağlanır.
+
+---
+
+## Kimlik Doğrulama Akışı (Önerilen)
+Bu repo zaten `AuthContext` ve `ProtectedRoute` iskeletine sahip görünüyor.
+
+Önerilen akış:
+1. **Signup**:
+   - Kullanıcı ad, email, şifre girer
+   - Backend User oluşturur
+   - Şifre bcrypt ile hashlenir (backend modelde bcryptjs bulunuyor)
+2. **Login**:
+   - Email + şifre ile kullanıcı doğrulanır
+   - Doğruysa token üretilir (JWT varsayılır)
+3. **Koruma**:
+   - `ProtectedRoute` kullanıcı oturumunu kontrol eder
+   - Oturum yoksa `/login` sayfasına yönlendirir
+
+---
+
+## Geliştirme İpuçları (Best Practices)
+- **Merkezi path yönetimi**: Endpoint stringlerini UI içinde “hardcode” etmeyin; `apiPaths.js` kullanın.
+- **Tek axios instance**: Header/tokeni tek noktadan yönetin.
+- **Durum yönetimi**: Auth durumunu `AuthContext` içinde toplayın.
+- **Hata yönetimi**: Axios catch bloklarında kullanıcıya anlaşılır mesaj gösterin.
+- **Environment değişkenleri**:
+  - `VITE_*` ile frontend baseURL
+  - `MONGO_URI`, `PORT` ile backend ayarları
+
+---
+
+## Güvenlik Notları
+- Backend tarafında bcryptjs ile şifre hash’lenmelidir.
+- Frontend’e API key koymayın.
+- CORS ayarı production’da daraltılmalıdır (şu an geliştirilen projede `origin: "*"` görülebilir).
+- Token saklama stratejinizi (localStorage/cookie) risklere göre belirleyin.
 
 ---
 
 ## Sık Sorulanlar (SSS)
-### 1) Neden mevcut sayfalar `div` içinde sadece metin dönüyor?
-Bu repo şu an UI iskeleti/altyapı doğrulaması gibi çalışır durumda görünüyor. Gerçek işlevler (formlar, API çağrıları, state yönetimi) ilgili sayfa/bileşenlere eklendikçe README’nin “Akışlar” bölümleri daha da netleşir.
+### 1) Frontend ve backend’i aynı anda nasıl çalıştıracağım?
+- Terminal 1: `frontend/eBookReact` → `npm run dev`
+- Terminal 2: `backend` → `node server.js`
 
-### 2) Backend’i nasıl bağlamalıyım?
-- `src/utils/axiosInstance.js` ve `src/utils/apiPaths.js` üzerinden backend endpoint’lerini tanımlayın.
-- Ardından `LoginPage`, `SignupPage`, `DashboardPage`, `EditorPage` gibi sayfalarda ilgili çağrıları entegre edin.
+### 2) Frontend backend’i bulamazsa ne yapmalıyım?
+- `axiosInstance.js` içindeki `baseURL` değerini kontrol edin.
+- Backend çalışıyor mu ve doğru porta dinliyor mu kontrol edin.
+- CORS hatası varsa backend’de origin ayarını gözden geçirin.
 
+### 3) ProtectedRoute çalışmıyor gibi görünürse?
+- `AuthContext` token/user durumunu doğru yönetiyor mu kontrol edin.
+- Login sonrası token saklanıyor mu kontrol edin.
 
+---
 
+## Sorun Giderme
+- **MongoDB bağlantı hatası**: `MONGO_URI` çevresel değişkeni doğru mu?
+- **Port çakışması**: `PORT` değerini değiştirin.
+- **CORS hatası**: `cors` origin ayarlarını düzenleyin.
+- **Static uploads**: `backend/uploads` klasörü var mı? ve istenen dosya gerçekten orada mı?
 
+---
+
+> Son Not: Bu doküman, proje iskeletinde görünen modül/klasör yapısına göre kapsamlı şekilde yazılmıştır. Kod tarafında eklenen her yeni endpoint, route veya UI akışı, README’nin ilgili bölümüne eklenerek güncel tutulmalıdır.
 
