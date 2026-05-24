@@ -22,4 +22,6 @@ const protect = async (req, res, next) => {
  if (!token) {
   return res.status(401).json({message: 'Yetkisiz kullanım'});
  }
-}
+};
+
+module.exports = {protect};
