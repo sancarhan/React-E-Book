@@ -6,6 +6,7 @@
 
 ---
 
+
 ## İçindekiler
 - [Genel Bakış](#genel-bakış)
 - [Özellikler](#özellikler)
