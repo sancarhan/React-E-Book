@@ -5,7 +5,7 @@
 > Backend tarafı ise **Node.js (Express)** ve **MongoDB (Mongoose)** üzerinde kurgulanmıştır. Kimlik doğrulama (auth), veri modelleme (User/Book) ve dosya/dış içerik süreçleri için genişletilebilir bir temel sunar.
 
 ---
-asdasdasdasd
+
 
 ## İçindekiler
 - [Genel Bakış](#genel-bakış)
