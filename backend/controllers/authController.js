@@ -37,6 +37,11 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
+    const user = await User.findOne({ email }).select("+password");
+
+    if (user && (await user.matchPassword(password))) {
+      
+    }
   } catch (error) {
     res.status(500).json({ message: "Server Hatası" });
   }
