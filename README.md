@@ -1,6 +1,6 @@
 # eBookReact (React + Vite) — Kapsamlı Türkçe Dokümantasyon
 
-> Bu proje, e-kitap (kitap/bölüm) okuma ve içerik üretme odaklı çalışan bir **React + Vite** uygulamasıdır. Uygulama; **landing**, **login**, **signup**, korumalı sayfalar, **dashboard**, **editor** ve kitap görüntüleme gibi modüllere ayrılmıştır. (Herhangi bir gerçek bir web sitesi ile alakası yoktur tamamen parodi bir uygulamadır)
+> Bu proje, e-kitap (kitap/bölüm) okuma ve içerik üretme odaklı çalışan bir **React + Vite** uygulamasıdır. Uygulama; **landing**, **login**, **signup**, korumalı sayfalar, **dashboard**, **editor** ve kitap görüntüleme gibi modüllere ayrılmıştır. (Herhangi bir gerçek bir web sitesi ile alakası yoktur tamamen parodi bir uygulamadır !!)
 >
 > Backend tarafı ise **Node.js (Express)** ve **MongoDB (Mongoose)** üzerinde kurgulanmıştır. Kimlik doğrulama (auth), veri modelleme (User/Book) ve dosya/dış içerik süreçleri için genişletilebilir bir temel sunar.
 
