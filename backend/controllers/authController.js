@@ -50,7 +50,7 @@ exports.loginUser = async (req, res) => {
     }else{
       res.status(401).json({message: "Geçersiz kimlik bilgileri"});
     }
-    
+    const;
   } catch (error) {
     res.status(500).json({ message: "Server Hatası" });
   }
